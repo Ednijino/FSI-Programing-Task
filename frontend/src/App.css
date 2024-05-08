@@ -36,11 +36,52 @@
     transform: rotate(360deg);
   }
 }
-input, button {
-  margin: 5px;
-  padding: 10px;
-  font-size: 16px;
+.App-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
-button {
-  cursor: pointer;
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Full height of the viewport */
+}
+
+.ticker-input {
+  position: absolute;
+  top: 20px; /* Positioning at the top */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.question-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20vh; /* Position it more towards the middle */
+}
+
+.question-input {
+  width: 600px; /* Larger width for the question input */
+  font-size: 200x; /* Larger font size for readability */
+  padding: 10px; /* More padding for better visual appeal */
+}
+
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 20vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
 }

@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, jsonify, request
 # from openai import OpenAI
 from data_preprocess import read_and_combine_files
 from analysis import *
@@ -18,15 +18,54 @@ ticker, question = "MSFT", "What is the net revenue change over year?"
 #     main_directory = 'sec-edgar-filings/MSFT/10-K'
 #     content = read_and_combine_files(main_directory)
 #     return {'content': content}
+income_data = {
+    "TSLA": [
+        {"date": "2020-Q1", "income": 950},
+        {"date": "2020-Q2", "income": 1200},
+        {"date": "2020-Q3", "income": 1500},
+        {"date": "2020-Q4", "income": 1800},
+        {"date": "2021-Q1", "income": 2100},
+        {"date": "2021-Q2", "income": 2400},
+        {"date": "2021-Q3", "income": 2700},
+        {"date": "2021-Q4", "income": 3000},
+    ],
+    "AAPL": [
+        {"date": "2020-Q1", "income": 5300},
+        {"date": "2020-Q2", "income": 5600},
+        {"date": "2020-Q3", "income": 5900},
+        {"date": "2020-Q4", "income": 6200},
+        {"date": "2021-Q1", "income": 6500},
+        {"date": "2021-Q2", "income": 6800},
+        {"date": "2021-Q3", "income": 7100},
+        {"date": "2021-Q4", "income": 7400},
+    ],
+    "AMZN": [
+        {"date": "2020-Q1", "income": 4200},
+        {"date": "2020-Q2", "income": 4400},
+        {"date": "2020-Q3", "income": 4600},
+        {"date": "2020-Q4", "income": 4800},
+        {"date": "2021-Q1", "income": 5000},
+        {"date": "2021-Q2", "income": 5200},
+        {"date": "2021-Q3", "income": 5400},
+        {"date": "2021-Q4", "income": 5600},
+    ]
+}
+
+@app.route('/api/income-data', methods=['GET'])
+def get_income_data():
+    try:
+        ticker = request.args.get('ticker', default='TSLA', type=str)
+        data = income_data.get(ticker)
+        if data:
+            return jsonify(data)
+        else:
+            return jsonify({"error": "Ticker not found"}), 404
+    except Exception as e:
+        # Logging the exception can be helpful for debugging
+        app.logger.error(f"An error occurred: {str(e)}")
+        return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
 
 
-@app.route("/api/get_chart_data", methods=['POST'])
-def return_chart_data():
-    print("Getting chart data")
-    ticker = request.json.get('ticker')
-    # Process the ticker to generate word frequencies
-    word_frequencies = generate_word_frequencies(ticker)
-    return {"words": word_frequencies}
 
 def generate_word_frequencies(ticker):
     question = "Give me the top 25 word frequency in the files"
@@ -37,9 +76,9 @@ def generate_word_frequencies(ticker):
 @app.route('/api/get-answer', methods=['POST'])
 def get_answer():
     if request.is_json:
-        # Parse the incoming JSON data
-        data = request.get_json()
-        question = data.get('question', '')
+        data = request.json
+        ticker = data['ticker']
+        question = data['question']
         answer = get_answer_from_openai("TSLA", question)
         return {'question': question, 'answer': answer}
     else:

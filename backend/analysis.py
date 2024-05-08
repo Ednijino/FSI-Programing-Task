@@ -3,18 +3,40 @@ import os
 from data_preprocess import read_and_combine_files, extract_financial_data
 from collections import Counter
 from utils import *
+import json
+import requests
+import pandas as pd
+import os
 # Get the answer from openai
 # input: ticker - the stock ticker
 #        question - the question to ask openai
 # output: the answer from openai
+def get_risk_txt(ticker):
+    from sec_api import ExtractorApi
+    ticker = "TSLA"
+    urls = {}
+    merged_txt = ""
+    with open(f'10Kfillings/{ticker}/urls.json', 'r') as file:
+        urls = json.load(file)
+    for year, url in urls.items():
+        # 10-K filing URL of ticker
+        filing_url = url
+        extractorApi = ExtractorApi("bbcee50b49f38b3e91e37c6466aed9a4795ecbda3108aa43abb6b2c1f52acd5d")
+        section_text = extractorApi.get_section(filing_url, "1A", "text")
+        merged_txt += section_text
+    with open(f'10Kfillings/TSLA/risk.txt', 'w') as file:
+        file.write(merged_txt)
+
 def get_answer_from_openai(ticker, question):
     
-    file_path = f'10Kfillings/{ticker}/income_statement_merge.txt'
     
+    file_path = f'10Kfillings/{ticker}/income_statement_merge.txt'
+    if not os.path.exists(file_path):
+        get_risk_txt(ticker)
     # Memorize the data, the same document will only be processed once and cached.
     text = get_text(file_path)
     memory_path = memorize(text)
-    
+    question += f"you answer should about the company {ticker}"
     return answer(question, memory_path)
 
 

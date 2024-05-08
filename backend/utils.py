@@ -145,7 +145,7 @@ def retrieve(q_embd, info):
 
 def chatGPT_api(messages):
 	completion = openai.ChatCompletion.create(
-	model = 'gpt-3.5-turbo',
+	model = 'gpt-4-turbo',
 	messages=messages,
 	temperature = 1,
 	top_p = 0.95,
