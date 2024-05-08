@@ -4,7 +4,7 @@
 
 [Download Dockerfile](https://drive.google.com/file/d/11UCE0hko8_6lyqRJG5C-Tv03_0wJCilf/view?usp=sharing)
 
-Put dockerfile in the fintech file and run
+Put dockerfile in the project folder and run
 
 ```
 docker load -i fsi_task_dockerfile.tar
